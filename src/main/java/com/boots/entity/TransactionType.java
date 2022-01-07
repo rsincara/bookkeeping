@@ -9,6 +9,7 @@ public class TransactionType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long balanceId;
     private ETransactionTypes transactionType;
     private Double amount;
     private String commentary;
@@ -27,6 +28,14 @@ public class TransactionType {
 
     public void setTransactionType(ETransactionTypes transactionType) {
         this.transactionType = transactionType;
+    }
+
+    public Long getBalanceId() {
+        return balanceId;
+    }
+
+    public void setBalanceId(Long balanceId) {
+        this.balanceId = balanceId;
     }
 
     public ETransactionTypes getTransactionType() {
