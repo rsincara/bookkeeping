@@ -156,7 +156,7 @@
 }
 
 .add-balance__form {
-    height: 90%;
+    height: 87%;
     margin-top: 15px;
     display: flex;
     flex-direction: column;
@@ -190,8 +190,6 @@
 
     border: 0;
     outline: 0;
-
-    margin-top: 100px;
 
     cursor: pointer;
     transition: .3s;

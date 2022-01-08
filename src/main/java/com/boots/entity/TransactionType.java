@@ -1,7 +1,7 @@
 package com.boots.entity;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Date;
 
 @Entity
 @Table(name = "t_transactions")

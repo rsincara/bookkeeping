@@ -8,8 +8,8 @@ import com.boots.repository.BalanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Date;
 
 @Service
 public class BalanceService {
@@ -54,6 +54,11 @@ public class BalanceService {
         balanceRepository.deleteById(balance.getId());
     }
 
+    public void updateBalance(Balance balance) {
+        balanceRepository.save(balance);
+    }
+
+
     public boolean saveBalance(Balance balance) {
         ArrayList<Balance> foundBalances = balanceRepository.findAllByUserId(balance.getUserId());
 
@@ -66,7 +71,8 @@ public class BalanceService {
         TransactionType newTransaction = new TransactionType();
         newTransaction.setAmount(balance.getAmount());
         newTransaction.setTransactionType(ETransactionTypes.income);
-        newTransaction.setDate(new Date());
+        java.util.Date newDate = new java.util.Date();
+        newTransaction.setDate(new Date(newDate.getYear(), newDate.getMonth(), newDate.getDate()));
         newTransaction.setCommentary("Начальный баланс");
         balanceRepository.save(balance);
         Balance addedBalance = getBalanceByUserIdAndBalanceName(balance.getUserId(), balance.getName());

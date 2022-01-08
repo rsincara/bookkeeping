@@ -1,3 +1,9 @@
+Date.prototype.toDateInputValue = (function() {
+    let local = new Date(this);
+    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+    return local.toJSON().slice(0,10);
+});
+
 window.onload = function () {
 
     let store = {
@@ -5,12 +11,16 @@ window.onload = function () {
         chosenBalance: null,
     };
 
+    document.getElementById('transaction-date').value =  new Date().toDateInputValue();
+
     $.get("/get-user-info", {
 
         userName: document.getElementById('username').innerText
     }).done((result) => {
         store.resultInfo = result;
         store.chosenBalance = result.balancesWithTransactions[0];
+        document.getElementById('transaction-name').innerText = result.balancesWithTransactions[0].balanceName;
+        document.getElementById('transaction-balance-name').value = result.balancesWithTransactions[0].balanceName;
         setBalanceAndTransactionInfo(store.chosenBalance);
         document.getElementById('general-balance__value').innerText = `${result.generalBalance}р`;
         result.balancesWithTransactions.forEach((balanceWithTransactions) => {
@@ -28,18 +38,26 @@ window.onload = function () {
 
     $('#balance-select').change(() => {
         const selected = $("#balance-select").val();
+        document.getElementById('transaction-name').innerText = selected;
+        document.getElementById('transaction-balance-name').value = selected;
+
         store.chosenBalance = store.resultInfo.balancesWithTransactions.find((item) => item.balanceName === selected);
         setBalanceAndTransactionInfo(store.chosenBalance);
         console.log('selected', selected);
         console.log('store', store);
     });
 
-    $('#add-balance-close-modal').click(() => {
+    $('.add-balance__close').click(() => {
        document.getElementById('add-modal').style.display = 'none';
+       document.getElementById('add-transaction-modal').style.display = 'none';
     });
 
     $('#add-balance-btn').click(() => {
         document.getElementById('add-modal').style.display = 'flex';
+    });
+
+    $('#add-transaction-btn').click(() => {
+        document.getElementById('add-transaction-modal').style.display = 'flex';
     });
 
     $('#remove-balance-btn').click(() => {

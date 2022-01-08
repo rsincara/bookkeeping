@@ -30,10 +30,52 @@
   </sec:authorize>
   <sec:authorize access="isAuthenticated()">
 
+  <div class="modal" style="display: none" id="add-transaction-modal">
+    <div class="add-balance">
+      <h2 class="add-balance__title">Добавить транзакцию к счету</h2>
+      <h2 class="add-balance__title" id="transaction-name"></h2>
+      <button class="add-balance__close">
+        &#10006;
+      </button>
+      <form class="add-balance__form" method="post" action="/add-transaction">
+        <input hidden name="userName" value="${pageContext.request.userPrincipal.name}" />
+        <input hidden name="balanceName" id="transaction-balance-name" />
+
+        <div class="add-balance__input-wrapper">
+          <div class="add-balance__label-wrapper">
+            <label class="add-balance__label" for="transaction-type">Тип транзакции</label>
+            <select id="transaction-type" name="transactionType">
+              <option>Доход</option>
+              <option>Расход</option>
+            </select>
+          </div>
+
+          <div class="add-balance__label-wrapper">
+            <label class="add-balance__label" for="transaction-summ">Сумма</label>
+            <input id="transaction-summ" name="amount">
+          </div>
+
+          <div class="add-balance__label-wrapper">
+            <label class="add-balance__label" for="transaction-date">Дата</label>
+            <input id="transaction-date" type="date" name="date">
+          </div>
+
+          <div class="add-balance__label-wrapper">
+            <label class="add-balance__label" for="transaction-commentary">Комментарий</label>
+            <textarea class="add-balance__textarea" id="transaction-commentary" name="commentary"> </textarea>
+          </div>
+
+        </div>
+
+        <button class="add-balance__submit-btn" type="submit">Сохранить</button>
+      </form>
+    </div>
+  </div>
+
   <div class="modal" id="add-modal" style="display: none">
     <div class="add-balance">
       <h2 class="add-balance__title">Добавить счет</h2>
-      <button class="add-balance__close" id="add-balance-close-modal">
+      <button class="add-balance__close">
         &#10006;
       </button>
       <form class="add-balance__form" method="post" action="/add-balance">
@@ -75,7 +117,7 @@
         </p>
         <a href="#" class="balance__new-balance" id="add-balance-btn">Добавить счет</a> <br/>
         <a href="#" class="balance__remove-balance" id="remove-balance-btn">Удалить счет</a> <br/>
-        <a href="#" class="balance__new-transaction">Добавить транзакцию</a>
+        <a href="#" class="balance__new-transaction" id="add-transaction-btn">Добавить транзакцию</a>
       </div>
 
       <div class="transactions">
