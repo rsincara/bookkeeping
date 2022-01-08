@@ -6,6 +6,7 @@ window.onload = function () {
     };
 
     $.get("/get-user-info", {
+
         userName: document.getElementById('username').innerText
     }).done((result) => {
         store.resultInfo = result;
@@ -31,6 +32,23 @@ window.onload = function () {
         setBalanceAndTransactionInfo(store.chosenBalance);
         console.log('selected', selected);
         console.log('store', store);
+    });
+
+    $('#add-balance-close-modal').click(() => {
+       document.getElementById('add-modal').style.display = 'none';
+    });
+
+    $('#add-balance-btn').click(() => {
+        document.getElementById('add-modal').style.display = 'flex';
+    });
+
+    $('#remove-balance-btn').click(() => {
+        $.get("/remove-balance", {
+            userName: document.getElementById('username').innerText,
+            balanceName: store.chosenBalance.balanceName
+        }).done(() => {
+            location.reload();
+        });
     });
 
     function setBalanceAndTransactionInfo(chosenBalance) {

@@ -29,6 +29,32 @@
     </header>
   </sec:authorize>
   <sec:authorize access="isAuthenticated()">
+
+  <div class="modal" id="add-modal" style="display: none">
+    <div class="add-balance">
+      <h2 class="add-balance__title">Добавить счет</h2>
+      <button class="add-balance__close" id="add-balance-close-modal">
+        &#10006;
+      </button>
+      <form class="add-balance__form" method="post" action="/add-balance">
+        <div class="add-balance__input-wrapper">
+          <input hidden name="userName" value="${pageContext.request.userPrincipal.name}" />
+          <div class="add-balance__label-wrapper">
+            <label class="add-balance__label" for="balance-name">Название счета</label>
+            <input id="balance-name" name="balanceName">
+          </div>
+
+          <div class="add-balance__label-wrapper">
+            <label class="add-balance__label" for="start-balance">Стартовый капитал</label>
+            <input id="start-balance" name="balanceAmount">
+          </div>
+        </div>
+
+        <button class="add-balance__submit-btn" type="submit">Сохранить</button>
+      </form>
+    </div>
+  </div>
+
   <div class="content-wrapper">
 
     <div class="general-balance">
@@ -47,7 +73,8 @@
         <p class="balance__current-balance">
           Текущий баланс: <span id="current-balance__value"></span>
         </p>
-        <a href="#" class="balance__new-balance">Добавить счет</a> <br/>
+        <a href="#" class="balance__new-balance" id="add-balance-btn">Добавить счет</a> <br/>
+        <a href="#" class="balance__remove-balance" id="remove-balance-btn">Удалить счет</a> <br/>
         <a href="#" class="balance__new-transaction">Добавить транзакцию</a>
       </div>
 

@@ -1,4 +1,4 @@
-*{
+* {
     box-sizing: border-box;
     padding: 0;
     margin: 0;
@@ -64,6 +64,11 @@
     color: #42a81e;
 }
 
+.balance__remove-balance{
+    font-size: 18px;
+    color: #d50d0d;
+}
+
 .balance__new-transaction {
     font-size: 18px;
     color: #42a81e;
@@ -106,4 +111,109 @@
 
 .transactions__comment {
     width: 60%;
+}
+
+
+.modal {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0, 0, 0, 0.5);
+
+    animation-name: modalOpen;
+    animation-duration: .4s;
+}
+
+@keyframes modalOpen {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.add-balance {
+    position: relative;
+    width: 600px;
+    height: 500px;
+
+    background: #ffffff;
+
+    padding: 30px 100px;
+}
+
+.add-balance__title {
+    font-size: 25px;
+    text-align: center;
+}
+
+.add-balance__form {
+    height: 90%;
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.add-balance__label {
+    width: 150px;
+    margin-bottom: 5px;
+    font-size: 15px;
+}
+
+.add-balance__label-wrapper {
+    display: flex;
+    flex-direction: column;
+
+    margin-top: 15px;
+}
+
+
+.add-balance__label-wrapper > input {
+    border: 1px solid #282828;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.add-balance__submit-btn {
+    background-color: #42a81e;
+    color: #ffffff;
+    padding: 10px 15px;
+
+    border: 0;
+    outline: 0;
+
+    margin-top: 100px;
+
+    cursor: pointer;
+    transition: .3s;
+}
+
+.add-balance__submit-btn:hover {
+    background-color: #286e14;
+
+}
+
+.add-balance__input-wrapper {
+
+}
+
+.add-balance__close {
+    position: absolute;
+    right: 30px;
+    top: 30px;
+
+    background: 0;
+    border: 0;
+    outline: 0;
+
+    cursor: pointer;
 }

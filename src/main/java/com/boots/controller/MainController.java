@@ -1,5 +1,6 @@
 package com.boots.controller;
 
+import com.boots.entity.Balance;
 import com.boots.entity.User;
 import com.boots.model.BalanceWithTransactions;
 import com.boots.model.UserFullInfo;
@@ -8,9 +9,7 @@ import com.boots.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class MainController {
@@ -18,6 +17,11 @@ public class MainController {
     private UserService userService;
     @Autowired
     private BalanceService balanceService;
+
+    @GetMapping("/")
+    public String index() {
+        return "index";
+    }
 
     @GetMapping("/get-user-info")
     @ResponseBody
@@ -33,8 +37,28 @@ public class MainController {
         return userFullInfo;
     }
 
-    @GetMapping("/")
-    public String index() {
-        return "index";
+    @PostMapping("/add-balance")
+    public String addNewBalance(@RequestParam String userName, @RequestParam String balanceName, @RequestParam Double balanceAmount) {
+        User user = userService.loadUserByUsername(userName);
+        Balance newBalance = new Balance();
+        newBalance.setUserId(user.getId());
+        newBalance.setName(balanceName);
+        newBalance.setAmount(balanceAmount);
+        balanceService.saveBalance(newBalance);
+
+        return "redirect:/";
     }
+
+    @GetMapping("/remove-balance")
+    public String removeBalance(@RequestParam String userName, @RequestParam String balanceName) {
+        User user = userService.loadUserByUsername(userName);
+        Balance removingBalance = balanceService.getBalanceByUserIdAndBalanceName(user.getId(), balanceName);
+
+        if (removingBalance != null) {
+            balanceService.removeBalance(removingBalance);
+        }
+
+        return "redirect:/";
+    }
+
 }

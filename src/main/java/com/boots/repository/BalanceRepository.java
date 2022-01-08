@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface BalanceRepository extends JpaRepository<Balance, Long> {
     Optional<Balance> findById(Long id);
     ArrayList<Balance> findAllByUserId(Long id);
+    void deleteById(Long id);
 }
