@@ -10,11 +10,16 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 public class TransactionService {
     @Autowired
     TransactionRepository transactionRepository;
+
+    public Optional<TransactionType> getTransactionById(Long id) {
+        return transactionRepository.findById(id);
+    }
 
     public ArrayList<TransactionType> getTransactionsByBalanceId(Long id) {
         ArrayList<TransactionType> result = transactionRepository.findAllByBalanceId(id);

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 public class BalanceService {
@@ -18,6 +19,10 @@ public class BalanceService {
 
     @Autowired
     TransactionService transactionService;
+
+    public Optional<Balance> getBalanceById(Long id) {
+        return balanceRepository.findById(id);
+    }
 
     public ArrayList<BalanceWithTransactions> getBalancesWithTransactionsByUserId(long id) {
         ArrayList<BalanceWithTransactions> result = new ArrayList<>();

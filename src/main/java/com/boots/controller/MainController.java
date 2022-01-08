@@ -10,11 +10,11 @@ import com.boots.service.BalanceService;
 import com.boots.service.TransactionService;
 import com.boots.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
+import java.util.Optional;
 
 
 @Controller
@@ -94,6 +94,22 @@ public class MainController {
             balanceService.removeBalance(removingBalance);
         }
 
+        return "redirect:/";
+    }
+
+    @GetMapping("/remove-transaction")
+    public String removeBalance(@RequestParam Long id) {
+        Optional<TransactionType> transactionType = transactionService.getTransactionById(id);
+        if(transactionType.isPresent()) {
+            TransactionType foundTransaction = transactionType.get();
+            Balance bindBalance = balanceService.getBalanceById(foundTransaction.getBalanceId()).get();
+
+            bindBalance.setAmount(foundTransaction.getTransactionType() == ETransactionTypes.income ?
+                    bindBalance.getAmount() - foundTransaction.getAmount() :
+                    bindBalance.getAmount() + foundTransaction.getAmount());
+            balanceService.updateBalance(bindBalance);
+            transactionService.deleteTransactionById(foundTransaction.getId());
+        }
         return "redirect:/";
     }
 

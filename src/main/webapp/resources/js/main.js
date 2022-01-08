@@ -81,6 +81,7 @@ window.onload = function () {
                         <div class="transactions__date">${transaction.date}</div>
                         <div class="transactions__amount">${transaction.amount}</div>
                         <div class="transactions__comment">${transaction.commentary}</div>
+                        <a href="/remove-transaction?id=${transaction.id}" class="transactions__remove">Удалить</a>
                     </div>
                 `;
             if (transaction.transactionType === 'income') {
