@@ -112,7 +112,7 @@
 }
 
 .transactions__comment {
-    width: 50%;
+    width: 39%;
 }
 
 .transactions__remove {
@@ -130,6 +130,26 @@
 
 .transactions__remove:hover {
     background-color: #d50d0d;
+}
+
+.transactions__change {
+    display: inline-block;
+    text-align: center;
+    width: 10%;
+    padding: 5px 10px;
+    background-color: cornflowerblue;
+    color: #ffffff;
+    border: 0;
+    outline: 0;
+
+    transition: .3s;
+    margin-right: 1%;
+
+    cursor: pointer;
+}
+
+.transactions__change:hover {
+    background-color: #4d74b7;
 }
 
 .modal {

@@ -1,8 +1,23 @@
-Date.prototype.toDateInputValue = (function() {
+Date.prototype.toDateInputValue = (function () {
     let local = new Date(this);
     local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
-    return local.toJSON().slice(0,10);
+    return local.toJSON().slice(0, 10);
 });
+
+function openChangeTransactionModal(transaction) {
+    document.getElementById('change-transaction-modal').style.display = 'flex';
+    document.getElementById('transactionId').value = transaction.id;
+    document.getElementById('change-transaction-transaction-summ').value = transaction.amount;
+    document.getElementById('change-transaction-transaction-date').value = transaction.date;
+    document.getElementById('change-transaction-transaction-commentary').value = transaction.commentary
+    const select = [...document.querySelector('#change-transaction-transaction-type').getElementsByTagName('option')];
+    select.forEach((selectItem) => {
+        if (selectItem.innerText === 'Доход' && transaction.transactionType === 'income' ||
+            selectItem.innerText === 'Расход' && transaction.transactionType === 'consumption') {
+            selectItem.selected = true;
+        }
+    })
+}
 
 window.onload = function () {
 
@@ -11,7 +26,7 @@ window.onload = function () {
         chosenBalance: null,
     };
 
-    document.getElementById('transaction-date').value =  new Date().toDateInputValue();
+    document.getElementById('transaction-date').value = new Date().toDateInputValue();
 
     $.get("/get-user-info", {
 
@@ -48,8 +63,9 @@ window.onload = function () {
     });
 
     $('.add-balance__close').click(() => {
-       document.getElementById('add-modal').style.display = 'none';
-       document.getElementById('add-transaction-modal').style.display = 'none';
+        document.getElementById('add-modal').style.display = 'none';
+        document.getElementById('add-transaction-modal').style.display = 'none';
+        document.getElementById('change-transaction-modal').style.display = 'none';
     });
 
     $('#add-balance-btn').click(() => {
@@ -81,6 +97,7 @@ window.onload = function () {
                         <div class="transactions__date">${transaction.date}</div>
                         <div class="transactions__amount">${transaction.amount}</div>
                         <div class="transactions__comment">${transaction.commentary}</div>
+                        <a class="transactions__change" onclick='openChangeTransactionModal(${JSON.stringify(transaction)})'>Изменить</a>
                         <a href="/remove-transaction?id=${transaction.id}" class="transactions__remove">Удалить</a>
                     </div>
                 `;

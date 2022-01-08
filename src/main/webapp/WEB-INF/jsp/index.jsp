@@ -8,6 +8,9 @@
   <title>Главная</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <link rel="stylesheet" href="../../resources/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="../../resources/js/main.js"></script>
 
@@ -29,6 +32,46 @@
     </header>
   </sec:authorize>
   <sec:authorize access="isAuthenticated()">
+
+  <div class="modal" style="display: none" id="change-transaction-modal">
+    <div class="add-balance">
+      <h2 class="add-balance__title">Изменить транзакцию</h2>
+      <button class="add-balance__close">
+        &#10006;
+      </button>
+      <form class="add-balance__form" method="post" action="/update-transaction">
+        <input hidden name="transactionId" id="transactionId" />
+
+        <div class="add-balance__input-wrapper">
+          <div class="add-balance__label-wrapper">
+            <label class="add-balance__label" for="transaction-type">Тип транзакции</label>
+            <select id="change-transaction-transaction-type" name="transactionType">
+              <option>Доход</option>
+              <option>Расход</option>
+            </select>
+          </div>
+
+          <div class="add-balance__label-wrapper">
+            <label class="add-balance__label" for="transaction-summ">Сумма</label>
+            <input id="change-transaction-transaction-summ" name="amount">
+          </div>
+
+          <div class="add-balance__label-wrapper">
+            <label class="add-balance__label" for="transaction-date">Дата</label>
+            <input id="change-transaction-transaction-date" type="date" name="date">
+          </div>
+
+          <div class="add-balance__label-wrapper">
+            <label class="add-balance__label" for="transaction-commentary">Комментарий</label>
+            <textarea class="add-balance__textarea" id="change-transaction-transaction-commentary" name="commentary"> </textarea>
+          </div>
+
+        </div>
+
+        <button class="add-balance__submit-btn" type="submit">Сохранить</button>
+      </form>
+    </div>
+  </div>
 
   <div class="modal" style="display: none" id="add-transaction-modal">
     <div class="add-balance">

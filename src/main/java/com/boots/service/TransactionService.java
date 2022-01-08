@@ -1,5 +1,6 @@
 package com.boots.service;
 
+import com.boots.entity.Balance;
 import com.boots.entity.TransactionType;
 import com.boots.entity.User;
 import com.boots.repository.BalanceRepository;
@@ -19,6 +20,10 @@ public class TransactionService {
 
     public Optional<TransactionType> getTransactionById(Long id) {
         return transactionRepository.findById(id);
+    }
+
+    public void updateTransaction(TransactionType transactionType) {
+        transactionRepository.save(transactionType);
     }
 
     public ArrayList<TransactionType> getTransactionsByBalanceId(Long id) {

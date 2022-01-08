@@ -4,6 +4,7 @@ import com.boots.entity.Balance;
 import com.boots.entity.ETransactionTypes;
 import com.boots.entity.TransactionType;
 import com.boots.entity.User;
+import com.boots.helpers.TransactionHelper;
 import com.boots.model.BalanceWithTransactions;
 import com.boots.model.UserFullInfo;
 import com.boots.service.BalanceService;
@@ -113,4 +114,37 @@ public class MainController {
         return "redirect:/";
     }
 
+    @PostMapping("/update-transaction")
+    public String updateTransaction(
+            @RequestParam Long transactionId,
+            @RequestParam String transactionType,
+            @RequestParam Double amount,
+            @RequestParam Date date,
+            @RequestParam String commentary
+    ) {
+        Optional<TransactionType> optionalTransactionType = transactionService.getTransactionById(transactionId);
+        if(optionalTransactionType.isPresent()) {
+            TransactionType newTransaction = optionalTransactionType.get();
+            ETransactionTypes oldTransactionType = newTransaction.getTransactionType();
+            Double oldTransactionAmount = newTransaction.getAmount();
+
+            newTransaction.setTransactionType(transactionType.equalsIgnoreCase("доход") ?
+                    ETransactionTypes.income :
+                    ETransactionTypes.consumption);
+            newTransaction.setDate(date);
+            newTransaction.setAmount(amount);
+            newTransaction.setCommentary(commentary);
+
+            Balance bindBalance = balanceService.getBalanceById(newTransaction.getBalanceId()).get();
+            bindBalance.setAmount(TransactionHelper.getNewAmount(
+                    oldTransactionType,
+                    newTransaction.getTransactionType(),
+                    oldTransactionAmount,
+                    newTransaction.getAmount(),
+                    bindBalance.getAmount()));
+            balanceService.updateBalance(bindBalance);
+            transactionService.updateTransaction(newTransaction);
+        }
+        return "redirect:/";
+    }
 }
