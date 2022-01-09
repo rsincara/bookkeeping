@@ -147,4 +147,17 @@ public class MainController {
         }
         return "redirect:/";
     }
+
+    @PostMapping("/update-balance")
+    public String addNewBalance(
+            @RequestParam String userName,
+            @RequestParam String oldBalanceName,
+            @RequestParam String newBalanceName) {
+        User user = userService.loadUserByUsername(userName);
+        Balance balance = balanceService.getBalanceByUserIdAndBalanceName(user.getId(), oldBalanceName);
+        balance.setName(newBalanceName);
+        balanceService.updateBalance(balance);
+        return "redirect:/";
+    }
+
 }

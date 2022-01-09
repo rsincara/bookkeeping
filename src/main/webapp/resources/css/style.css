@@ -260,3 +260,8 @@
     height: 100px;
     resize: none;
 }
+
+.balance__change-balance {
+    font-size: 18px;
+    color: cornflowerblue;
+}

@@ -36,6 +36,7 @@ window.onload = function () {
         store.chosenBalance = result.balancesWithTransactions[0];
         document.getElementById('transaction-name').innerText = result.balancesWithTransactions[0].balanceName;
         document.getElementById('transaction-balance-name').value = result.balancesWithTransactions[0].balanceName;
+        document.getElementById('old-balance-name').value = result.balancesWithTransactions[0].balanceName;
         setBalanceAndTransactionInfo(store.chosenBalance);
         document.getElementById('general-balance__value').innerText = `${result.generalBalance}р`;
         result.balancesWithTransactions.forEach((balanceWithTransactions) => {
@@ -55,6 +56,7 @@ window.onload = function () {
         const selected = $("#balance-select").val();
         document.getElementById('transaction-name').innerText = selected;
         document.getElementById('transaction-balance-name').value = selected;
+        document.getElementById('old-balance-name').value = selected;
 
         store.chosenBalance = store.resultInfo.balancesWithTransactions.find((item) => item.balanceName === selected);
         setBalanceAndTransactionInfo(store.chosenBalance);
@@ -66,6 +68,7 @@ window.onload = function () {
         document.getElementById('add-modal').style.display = 'none';
         document.getElementById('add-transaction-modal').style.display = 'none';
         document.getElementById('change-transaction-modal').style.display = 'none';
+        document.getElementById('update-balance-modal').style.display = 'none';
     });
 
     $('#add-balance-btn').click(() => {
@@ -74,6 +77,10 @@ window.onload = function () {
 
     $('#add-transaction-btn').click(() => {
         document.getElementById('add-transaction-modal').style.display = 'flex';
+    });
+
+    $('#update-balance-btn').click(() => {
+        document.getElementById('update-balance-modal').style.display = 'flex';
     });
 
     $('#remove-balance-btn').click(() => {
