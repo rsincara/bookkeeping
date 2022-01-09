@@ -116,6 +116,7 @@
 }
 
 .transactions__remove {
+    height: 30px;
     display: inline-block;
     text-align: center;
     width: 10%;
@@ -133,6 +134,7 @@
 }
 
 .transactions__change {
+    height: 30px;
     display: inline-block;
     text-align: center;
     width: 10%;
