@@ -1,15 +1,12 @@
 package com.boots.service;
 
-import com.boots.entity.Balance;
 import com.boots.entity.ETransactionTypes;
 import com.boots.entity.TransactionType;
 import com.boots.entity.User;
 import com.boots.model.BalanceOnDate;
 import com.boots.model.BalanceWithTransactions;
-import com.boots.repository.BalanceRepository;
 import com.boots.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,12 +14,28 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
 
 @Service
 public class UserService implements UserDetailsService {
+
+    class DateComparator implements Comparator<BalanceOnDate> {
+        @Override
+        public int compare(BalanceOnDate a, BalanceOnDate b) {
+            Date dateA = a.getDate();
+            Date dateB = b.getDate();
+            java.util.Date newDateA = new java.util.Date(dateA.getYear(), dateA.getMonth(), dateA.getDate());
+            java.util.Date newDateB = new java.util.Date(dateB.getYear(), dateB.getMonth(), dateB.getDate());
+            return newDateA.compareTo(newDateB);
+        }
+    }
+
     @PersistenceContext
     private EntityManager em;
     @Autowired
@@ -49,17 +62,17 @@ public class UserService implements UserDetailsService {
     }
 
     public ArrayList<BalanceOnDate> getBalanceByDates(Long userId) {
-        ArrayList<BalanceOnDate> result = new ArrayList<>();
+        ArrayList<BalanceOnDate> transactionsAmountOnDate = new ArrayList<>();
         ArrayList<BalanceWithTransactions> allUserBalancesWithTransaction =
                 balanceService.getBalancesWithTransactionsByUserId(userId);
 
         for (BalanceWithTransactions balanceWithTransactions : allUserBalancesWithTransaction) {
             for (TransactionType transaction : balanceWithTransactions.transactions) {
-                Optional<BalanceOnDate> optionalFoundBalanceOnDate = result
-                                .stream()
-                                .filter(x -> x.getDate()
-                                .equals(transaction.getDate()))
-                                .findFirst();
+                Optional<BalanceOnDate> optionalFoundBalanceOnDate = transactionsAmountOnDate
+                        .stream()
+                        .filter(x -> x.getDate()
+                        .equals(transaction.getDate()))
+                        .findFirst();
                 BalanceOnDate addingBalanceOnDate;
                 if (optionalFoundBalanceOnDate.isPresent()) {
                     addingBalanceOnDate = optionalFoundBalanceOnDate.get();
@@ -71,12 +84,25 @@ public class UserService implements UserDetailsService {
                     addingBalanceOnDate.setDate(transaction.getDate());
                     addingBalanceOnDate.setAmount(transaction.getTransactionType() == ETransactionTypes.income ?
                             transaction.getAmount() : -transaction.getAmount());
-                    result.add(addingBalanceOnDate);
+                    transactionsAmountOnDate.add(addingBalanceOnDate);
                 }
             }
         }
 
-        return result;
+        Stream<BalanceOnDate> sortedTransactionsAmountOnDatesStream = transactionsAmountOnDate.stream().sorted(new DateComparator());
+        ArrayList<BalanceOnDate> resultBalanceOnDate = new ArrayList<>();
+        var ref = new Object() {
+            Double prevAmount = 0d;
+        };
+        sortedTransactionsAmountOnDatesStream.forEach(balanceOnDateSorted -> {
+            BalanceOnDate addingBalanceOnDate = new BalanceOnDate();
+            addingBalanceOnDate.setDate(balanceOnDateSorted.getDate());
+            addingBalanceOnDate.setAmount(ref.prevAmount + balanceOnDateSorted.getAmount());
+            resultBalanceOnDate.add(addingBalanceOnDate);
+            ref.prevAmount = addingBalanceOnDate.getAmount();
+        });
+
+        return resultBalanceOnDate;
     }
 
     public List<User> allUsers() {

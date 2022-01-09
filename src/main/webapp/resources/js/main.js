@@ -23,8 +23,7 @@ const config = {
 };
 
 function setDataOnChart(balanceOnDates) {
-    const sortedBalanceOnDates = [...balanceOnDates].sort((firstBalanceWithDate,secondBalanceWithDate) => new Date(firstBalanceWithDate.date) - new Date(secondBalanceWithDate.date))
-    sortedBalanceOnDates.forEach((balance) => {
+    balanceOnDates.forEach((balance) => {
         labels.push(balance.date);
         data.datasets[0].data.push(balance.amount);
     });
