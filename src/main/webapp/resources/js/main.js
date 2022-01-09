@@ -4,6 +4,32 @@ Date.prototype.toDateInputValue = (function () {
     return local.toJSON().slice(0, 10);
 });
 
+const labels = [];
+
+const data = {
+    labels: labels,
+    datasets: [{
+        label: 'Изменение бюджета по дням',
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgb(255, 99, 132)',
+        data: [],
+    }]
+};
+
+const config = {
+    type: 'line',
+    data: data,
+    options: {}
+};
+
+function setDataOnChart(balanceOnDates) {
+    const sortedBalanceOnDates = [...balanceOnDates].sort((firstBalanceWithDate,secondBalanceWithDate) => new Date(firstBalanceWithDate.date) - new Date(secondBalanceWithDate.date))
+    sortedBalanceOnDates.forEach((balance) => {
+        labels.push(balance.date);
+        data.datasets[0].data.push(balance.amount);
+    });
+}
+
 function openChangeTransactionModal(transaction) {
     document.getElementById('change-transaction-modal').style.display = 'flex';
     document.getElementById('transactionId').value = transaction.id;
@@ -20,7 +46,6 @@ function openChangeTransactionModal(transaction) {
 }
 
 window.onload = function () {
-
     let store = {
         resultInfo: {},
         chosenBalance: null,
@@ -29,9 +54,13 @@ window.onload = function () {
     document.getElementById('transaction-date').value = new Date().toDateInputValue();
 
     $.get("/get-user-info", {
-
         userName: document.getElementById('username').innerText
     }).done((result) => {
+        setDataOnChart(result.balanceOnDates);
+        const myChart = new Chart(
+            document.getElementById('myChart'),
+            config
+        );
         store.resultInfo = result;
         store.chosenBalance = result.balancesWithTransactions[0];
         document.getElementById('transaction-name').innerText = result.balancesWithTransactions[0].balanceName;
@@ -115,18 +144,4 @@ window.onload = function () {
             }
         })
     }
-
-    // $(".remove-link").click((e) => {
-    //     e.currentTarget.closest('.content-wrapper').remove();
-    //     var btn = $(e.currentTarget);
-    //     var purchaseID = btn.attr("data-delete-id");
-    //     $.post("/purchase/" + purchaseID + "/delete", () => {});
-    // });
-    //
-    // $(".checkbox").click((e) => {
-    //     var btn = $(e.currentTarget);
-    //     var purchaseID = btn.attr("data-purchase-id");
-    //     btn.attr("disabled", "disabled");
-    //     $.post("/purchase/" + purchaseID + "/bought", () => {});
-    // });
 };

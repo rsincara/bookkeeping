@@ -5,6 +5,7 @@ import com.boots.entity.ETransactionTypes;
 import com.boots.entity.TransactionType;
 import com.boots.entity.User;
 import com.boots.helpers.TransactionHelper;
+import com.boots.model.BalanceOnDate;
 import com.boots.model.BalanceWithTransactions;
 import com.boots.model.UserFullInfo;
 import com.boots.service.BalanceService;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Optional;
 
 
@@ -42,7 +44,8 @@ public class MainController {
         for (BalanceWithTransactions balanceWithTransactions : userFullInfo.balancesWithTransactions) {
             userFullInfo.setGeneralBalance(userFullInfo.getGeneralBalance() + balanceWithTransactions.amount);
         }
-
+        ArrayList<BalanceOnDate> userBalanceOnDates = userService.getBalanceByDates(user.getId());
+        userFullInfo.setBalanceOnDates(userBalanceOnDates);
         return userFullInfo;
     }
 

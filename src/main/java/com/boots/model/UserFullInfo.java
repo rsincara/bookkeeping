@@ -6,9 +6,18 @@ public class UserFullInfo {
     public String userName;
     public ArrayList<BalanceWithTransactions> balancesWithTransactions;
     public Double generalBalance;
+    public ArrayList<BalanceOnDate> balanceOnDates;
 
     public UserFullInfo() {
         this.generalBalance = 0d;
+    }
+
+    public ArrayList<BalanceOnDate> getBalanceOnDates() {
+        return balanceOnDates;
+    }
+
+    public void setBalanceOnDates(ArrayList<BalanceOnDate> balanceOnDates) {
+        this.balanceOnDates = balanceOnDates;
     }
 
     public Double getGeneralBalance() {

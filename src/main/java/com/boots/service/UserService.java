@@ -1,6 +1,12 @@
 package com.boots.service;
 
+import com.boots.entity.Balance;
+import com.boots.entity.ETransactionTypes;
+import com.boots.entity.TransactionType;
 import com.boots.entity.User;
+import com.boots.model.BalanceOnDate;
+import com.boots.model.BalanceWithTransactions;
+import com.boots.repository.BalanceRepository;
 import com.boots.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +27,8 @@ public class UserService implements UserDetailsService {
     private EntityManager em;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    BalanceService balanceService;
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -37,6 +46,37 @@ public class UserService implements UserDetailsService {
     public User findUserById(Long userId) {
         Optional<User> userFromDb = userRepository.findById(userId);
         return userFromDb.orElse(new User());
+    }
+
+    public ArrayList<BalanceOnDate> getBalanceByDates(Long userId) {
+        ArrayList<BalanceOnDate> result = new ArrayList<>();
+        ArrayList<BalanceWithTransactions> allUserBalancesWithTransaction =
+                balanceService.getBalancesWithTransactionsByUserId(userId);
+
+        for (BalanceWithTransactions balanceWithTransactions : allUserBalancesWithTransaction) {
+            for (TransactionType transaction : balanceWithTransactions.transactions) {
+                Optional<BalanceOnDate> optionalFoundBalanceOnDate = result
+                                .stream()
+                                .filter(x -> x.getDate()
+                                .equals(transaction.getDate()))
+                                .findFirst();
+                BalanceOnDate addingBalanceOnDate;
+                if (optionalFoundBalanceOnDate.isPresent()) {
+                    addingBalanceOnDate = optionalFoundBalanceOnDate.get();
+                    addingBalanceOnDate.setAmount(addingBalanceOnDate.getAmount() +
+                            (transaction.getTransactionType() == ETransactionTypes.income ?
+                                    transaction.getAmount() : -transaction.getAmount()));
+                } else {
+                    addingBalanceOnDate = new BalanceOnDate();
+                    addingBalanceOnDate.setDate(transaction.getDate());
+                    addingBalanceOnDate.setAmount(transaction.getTransactionType() == ETransactionTypes.income ?
+                            transaction.getAmount() : -transaction.getAmount());
+                    result.add(addingBalanceOnDate);
+                }
+            }
+        }
+
+        return result;
     }
 
     public List<User> allUsers() {

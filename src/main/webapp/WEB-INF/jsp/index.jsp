@@ -12,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="../../resources/js/main.js"></script>
 
 </head>
@@ -210,6 +211,11 @@
           </div>
         </div>
       </div>
+
+      <div>
+        <canvas id="myChart"></canvas>
+      </div>
+
     </div>
   </main>
 </div>
