@@ -5,7 +5,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Log in with your account</title>
+  <title>Вход</title>
 </head>
 
 <body>
