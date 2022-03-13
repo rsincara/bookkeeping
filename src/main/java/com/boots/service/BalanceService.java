@@ -27,16 +27,12 @@ public class BalanceService {
     public ArrayList<BalanceWithTransactions> getBalancesWithTransactionsByUserId(long id) {
         ArrayList<BalanceWithTransactions> result = new ArrayList<>();
         ArrayList<Balance> foundBalance = balanceRepository.findAllByUserId(id);
-        if (foundBalance.size() != 0) {
             for (Balance balance : foundBalance) {
                 ArrayList<TransactionType> transactions = transactionService.getTransactionsByBalanceId(balance.getId());
                 result.add(new BalanceWithTransactions(balance.getName(), balance.getAmount(), transactions));
             }
 
             return result;
-        }
-
-        return null;
     }
 
     public Balance getBalanceByUserIdAndBalanceName(Long userId, String balanceName) {
@@ -48,8 +44,6 @@ public class BalanceService {
         }
         return null;
     }
-
-    ;
 
     public void removeBalance(Balance balance) {
         ArrayList<TransactionType> bindTransactions = transactionService.getTransactionsByBalanceId(balance.getId());

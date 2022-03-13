@@ -10,9 +10,7 @@ import com.boots.service.TransactionService;
 import com.boots.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
 import java.util.Optional;
@@ -28,7 +26,7 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @PostMapping("/add-transaction")
-    public String addNewBalance(
+    public String addNewTransaction(
             @RequestParam String balanceName,
             @RequestParam String userName,
             @RequestParam Double amount,
@@ -52,11 +50,12 @@ public class TransactionController {
                 balance.getAmount() + amount :
                 balance.getAmount() - amount);
         balanceService.updateBalance(balance);
+
         return "redirect:/";
     }
 
     @GetMapping("/remove-transaction")
-    public String removeBalance(@RequestParam Long id) {
+    public String removeTransaction(@RequestParam Long id) {
         Optional<TransactionType> transactionType = transactionService.getTransactionById(id);
         if (transactionType.isPresent()) {
             TransactionType foundTransaction = transactionType.get();
