@@ -15,10 +15,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 
 @Controller
 public class MainController {
+
+    private static final Logger log = Logger.getLogger(MainController.class.getName());
+
     @Autowired
     private UserService userService;
     @Autowired
@@ -26,6 +30,7 @@ public class MainController {
 
     @GetMapping("/")
     public String index() {
+        log.info("render index");
         return "index";
     }
 
@@ -33,6 +38,7 @@ public class MainController {
     @GetMapping("/get-user-info")
     @ResponseBody
     public UserFullInfo getUserDetails(@RequestParam String userName) {
+        log.info(String.format("params: userName:%s", userName));
         UserFullInfo userFullInfo = new UserFullInfo();
         userFullInfo.setUserName(userName);
         User user = userService.loadUserByUsername(userName);

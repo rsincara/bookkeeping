@@ -10,14 +10,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.logging.Logger;
+
 @Controller
 public class RegistrationController {
+
+    private static final Logger log = Logger.getLogger(RegistrationController.class.getName());
 
     @Autowired
     private UserService userService;
 
     @GetMapping("/registration")
     public String registration(Model model) {
+        log.info("rendered registration page");
         model.addAttribute("userForm", new User());
 
         return "registration";
@@ -25,15 +30,16 @@ public class RegistrationController {
 
     @PostMapping("/registration")
     public String addUser(@ModelAttribute("userForm") User userForm, BindingResult bindingResult, Model model) {
-
+        log.info(String.format("params: userName:%s, password:%s, password confirm:%s",
+                userForm.getUsername(), userForm.getPassword(), userForm.getPasswordConfirm()));
         if (bindingResult.hasErrors()) {
             return "registration";
         }
-        if (!userForm.getPassword().equals(userForm.getPasswordConfirm())){
+        if (!userForm.getPassword().equals(userForm.getPasswordConfirm())) {
             model.addAttribute("passwordError", "Пароли не совпадают");
             return "registration";
         }
-        if (!userService.saveUser(userForm)){
+        if (!userService.saveUser(userForm)) {
             model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
             return "registration";
         }

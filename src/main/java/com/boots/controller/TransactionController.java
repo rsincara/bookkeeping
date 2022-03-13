@@ -14,10 +14,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 
 @Controller
 public class TransactionController {
+
+    private static final Logger log = Logger.getLogger(TransactionController.class.getName());
+
     @Autowired
     private UserService userService;
     @Autowired
@@ -27,12 +31,15 @@ public class TransactionController {
 
     @PostMapping("/add-transaction")
     public String addNewTransaction(
-            @RequestParam String balanceName,
             @RequestParam String userName,
+            @RequestParam String balanceName,
             @RequestParam Double amount,
             @RequestParam Date date,
             @RequestParam String transactionType,
             @RequestParam String commentary) {
+        log.info(String.format("params: userName:%s, balanceName:%s, amount:%s, date:%s, transactionType:%s, commentary:%s ",
+                userName, balanceName, amount, date, transactionType, commentary));
+
         User user = userService.loadUserByUsername(userName);
         Balance balance = balanceService.getBalanceByUserIdAndBalanceName(user.getId(), balanceName);
 
@@ -56,6 +63,8 @@ public class TransactionController {
 
     @GetMapping("/remove-transaction")
     public String removeTransaction(@RequestParam Long id) {
+        log.info(String.format("params: id:%s", id));
+
         Optional<TransactionType> transactionType = transactionService.getTransactionById(id);
         if (transactionType.isPresent()) {
             TransactionType foundTransaction = transactionType.get();
@@ -78,6 +87,8 @@ public class TransactionController {
             @RequestParam Date date,
             @RequestParam String commentary
     ) {
+        log.info(String.format("params: transactionId:%s, transactionType:%s, amount:%s, date:%s, commentary:%s, ",
+                transactionId, transactionType, amount, date, commentary));
         Optional<TransactionType> optionalTransactionType = transactionService.getTransactionById(transactionId);
         if (optionalTransactionType.isPresent()) {
             TransactionType newTransaction = optionalTransactionType.get();
