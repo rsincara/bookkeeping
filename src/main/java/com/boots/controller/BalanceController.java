@@ -25,7 +25,7 @@ public class BalanceController {
     private BalanceService balanceService;
 
     @PostMapping("/add-balance")
-    public String addNewBalance(@RequestParam String userName, @RequestParam String balanceName, @RequestParam Double balanceAmount) {
+    public String addBalance(@RequestParam String userName, @RequestParam String balanceName, @RequestParam Double balanceAmount) {
         log.info(String.format("params: userName:%s, balanceName:%s, balanceAmount:%s", userName, balanceName, balanceAmount));
         User user = userService.loadUserByUsername(userName);
         Balance newBalance = new Balance();
@@ -49,7 +49,7 @@ public class BalanceController {
     }
 
     @PostMapping("/update-balance")
-    public String addNewBalance(
+    public String updateBalance(
             @RequestParam String userName,
             @RequestParam String oldBalanceName,
             @RequestParam String newBalanceName) {
