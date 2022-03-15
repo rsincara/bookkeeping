@@ -34,6 +34,12 @@ public class MainController {
         return "index";
     }
 
+    @GetMapping("/login")
+    public String login() {
+        log.info("render login");
+        return "login";
+    }
+
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/get-user-info")
     @ResponseBody
