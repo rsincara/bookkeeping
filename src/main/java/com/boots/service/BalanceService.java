@@ -3,6 +3,8 @@ package com.boots.service;
 import com.boots.entity.Balance;
 import com.boots.entity.ETransactionTypes;
 import com.boots.entity.TransactionType;
+import com.boots.exceptions.BalanceAlreadyExists;
+import com.boots.exceptions.BalanceNotFoundException;
 import com.boots.model.BalanceWithTransactions;
 import com.boots.repository.BalanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +22,19 @@ public class BalanceService {
     @Autowired
     TransactionService transactionService;
 
-    public Optional<Balance> getBalanceById(Long id) {
-        return balanceRepository.findById(id);
+
+    public ArrayList<Balance> getAllBalances()  {
+        return balanceRepository.findAll();
+    }
+
+    public Balance getBalanceById(Long id) throws BalanceNotFoundException {
+
+        Optional<Balance> balance = balanceRepository.findById(id);
+        if (balance.isPresent()) {
+            return balance.get();
+        } else {
+            throw new BalanceNotFoundException(id);
+        }
     }
 
     public ArrayList<BalanceWithTransactions> getBalancesWithTransactionsByUserId(long id) {
@@ -29,13 +42,13 @@ public class BalanceService {
         ArrayList<Balance> foundBalance = balanceRepository.findAllByUserId(id);
             for (Balance balance : foundBalance) {
                 ArrayList<TransactionType> transactions = transactionService.getTransactionsByBalanceId(balance.getId());
-                result.add(new BalanceWithTransactions(balance.getName(), balance.getAmount(), transactions));
+                result.add(new BalanceWithTransactions(balance, balance.getAmount(), transactions));
             }
 
             return result;
     }
 
-    public Balance getBalanceByUserIdAndBalanceName(Long userId, String balanceName) {
+    public Balance getBalanceByUserIdAndBalanceNameOrNull(Long userId, String balanceName) {
         ArrayList<Balance> foundBalances = balanceRepository.findAllByUserId(userId);
         for (Balance balance : foundBalances) {
             if (balance.getUserId().equals(userId) && balance.getName().equals(balanceName)) {
@@ -58,12 +71,11 @@ public class BalanceService {
     }
 
 
-    public boolean saveBalance(Balance balance) {
+    public void saveBalance(Balance balance) throws BalanceAlreadyExists {
         ArrayList<Balance> foundBalances = balanceRepository.findAllByUserId(balance.getUserId());
-
         for (Balance foundBalance : foundBalances) {
             if (foundBalance.getName().equalsIgnoreCase(balance.getName())) {
-                return false;
+                throw new BalanceAlreadyExists(foundBalance.getUserId(), balance.getName());
             }
         }
 
@@ -74,12 +86,11 @@ public class BalanceService {
         newTransaction.setDate(new Date(newDate.getYear(), newDate.getMonth(), newDate.getDate()));
         newTransaction.setCommentary("Начальный баланс");
         balanceRepository.save(balance);
-        Balance addedBalance = getBalanceByUserIdAndBalanceName(balance.getUserId(), balance.getName());
+        Balance addedBalance = getBalanceByUserIdAndBalanceNameOrNull(balance.getUserId(), balance.getName());
         // нужно, т.к. мы не знаем ID баланса на стадии добавления
         if (addedBalance != null) {
             newTransaction.setBalanceId(addedBalance.getId());
             transactionService.addTransaction(newTransaction);
         }
-        return true;
     }
 }

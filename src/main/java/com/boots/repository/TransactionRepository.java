@@ -9,6 +9,7 @@ import java.util.Optional;
 public interface TransactionRepository extends JpaRepository<TransactionType, Long> {
     Optional<TransactionType> findById(Long id);
     ArrayList<TransactionType> findAllByBalanceId(Long id);
+    ArrayList<TransactionType> findAll();
     void removeByBalanceId(Long id);
     void deleteById(Long id);
 }

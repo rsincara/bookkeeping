@@ -9,14 +9,10 @@ import com.boots.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;
-
 
 @Controller
 public class MainController {
@@ -39,11 +35,14 @@ public class MainController {
         log.info("render login");
         return "login";
     }
+    // spring core / spring mvc
+    // to correct rest
+    //@AdviceController
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/get-user-info")
+    @GetMapping("/user/{userName}/info")
     @ResponseBody
-    public UserFullInfo getUserDetails(@RequestParam String userName) {
+    public UserFullInfo getUserDetails(@PathVariable String userName) {
         log.info(String.format("params: userName:%s", userName));
         UserFullInfo userFullInfo = new UserFullInfo();
         userFullInfo.setUserName(userName);

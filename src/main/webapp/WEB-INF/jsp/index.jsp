@@ -40,7 +40,7 @@
       <button class="add-balance__close">
         &#10006;
       </button>
-      <form class="add-balance__form" method="post" action="/update-balance">
+      <form class="add-balance__form" id="update-balance-form">
         <input hidden name="userName" value="${pageContext.request.userPrincipal.name}" />
         <div class="add-balance__input-wrapper">
           <div class="add-balance__label-wrapper">
@@ -53,7 +53,7 @@
           </div>
         </div>
 
-        <button class="add-balance__submit-btn" type="submit">Сохранить</button>
+        <button id="update-balance-apply-btn" class="add-balance__submit-btn" type="submit">Сохранить</button>
       </form>
     </div>
   </div>
@@ -64,7 +64,8 @@
       <button class="add-balance__close">
         &#10006;
       </button>
-      <form class="add-balance__form" method="post" action="/update-transaction">
+
+      <form class="add-balance__form">
         <input hidden name="transactionId" id="transactionId" />
 
         <div class="add-balance__input-wrapper">
@@ -93,7 +94,7 @@
 
         </div>
 
-        <button class="add-balance__submit-btn" type="submit">Сохранить</button>
+        <button class="add-balance__submit-btn" id="update-transaction-apply-btn" type="submit">Сохранить</button>
       </form>
     </div>
   </div>
@@ -105,7 +106,7 @@
       <button class="add-balance__close">
         &#10006;
       </button>
-      <form class="add-balance__form" method="post" action="/add-transaction">
+      <form class="add-balance__form">
         <input hidden name="userName" value="${pageContext.request.userPrincipal.name}" />
         <input hidden name="balanceName" id="transaction-balance-name" />
 
@@ -135,7 +136,7 @@
 
         </div>
 
-        <button class="add-balance__submit-btn" type="submit">Сохранить</button>
+        <button class="add-balance__submit-btn" id="add-new-transaction-btn" type="submit">Сохранить</button>
       </form>
     </div>
   </div>
@@ -146,7 +147,7 @@
       <button class="add-balance__close">
         &#10006;
       </button>
-      <form class="add-balance__form" method="post" action="/add-balance">
+      <form class="add-balance__form">
         <div class="add-balance__input-wrapper">
           <input hidden name="userName" value="${pageContext.request.userPrincipal.name}" />
           <div class="add-balance__label-wrapper">
@@ -160,7 +161,7 @@
           </div>
         </div>
 
-        <button class="add-balance__submit-btn" type="submit">Сохранить</button>
+        <button class="add-balance__submit-btn" id='add-balance__submit-btn' type="submit">Сохранить</button>
       </form>
     </div>
   </div>

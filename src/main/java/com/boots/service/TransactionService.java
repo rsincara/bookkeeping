@@ -1,15 +1,11 @@
 package com.boots.service;
 
-import com.boots.entity.Balance;
 import com.boots.entity.TransactionType;
-import com.boots.entity.User;
-import com.boots.repository.BalanceRepository;
+import com.boots.exceptions.TransactionNotFoundException;
 import com.boots.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -18,8 +14,16 @@ public class TransactionService {
     @Autowired
     TransactionRepository transactionRepository;
 
-    public Optional<TransactionType> getTransactionById(Long id) {
-        return transactionRepository.findById(id);
+    public ArrayList<TransactionType> getAllTransactions()  {
+        return transactionRepository.findAll();
+    }
+
+    public TransactionType getTransactionById(Long id) throws TransactionNotFoundException {
+        Optional<TransactionType> transactionType = transactionRepository.findById(id);
+        if (transactionType.isPresent()) {
+            return transactionType.get();
+        }
+        throw new TransactionNotFoundException(id);
     }
 
     public void updateTransaction(TransactionType transactionType) {
@@ -27,14 +31,12 @@ public class TransactionService {
     }
 
     public ArrayList<TransactionType> getTransactionsByBalanceId(Long id) {
-        ArrayList<TransactionType> result = transactionRepository.findAllByBalanceId(id);
-        return result;
+        return transactionRepository.findAllByBalanceId(id);
     }
 
-    public boolean addTransaction(TransactionType transactionType) {
+    public void addTransaction(TransactionType transactionType) {
         transactionRepository.save(transactionType);
 
-        return true;
     }
 
     public void deleteTransactionById(Long id) {

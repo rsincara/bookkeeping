@@ -44,6 +44,18 @@ function openChangeTransactionModal(transaction) {
     })
 }
 
+function removeTransactionRequest(transactionId) {
+    $.ajax( {
+        url: "/transactions",
+        method: 'DELETE',
+        data: {
+            id: transactionId
+        }
+    }).done(() => {
+        location.reload();
+    });
+}
+
 window.onload = function () {
     let store = {
         resultInfo: {},
@@ -52,9 +64,7 @@ window.onload = function () {
 
     document.getElementById('transaction-date').value = new Date().toDateInputValue();
 
-    $.get("/get-user-info", {
-        userName: document.getElementById('username').innerText
-    }).done((result) => {
+    $.get(`/user/${document.getElementById('username').innerText}/info`).done((result) => {
         setDataOnChart(result.balanceOnDates);
         const myChart = new Chart(
             document.getElementById('myChart'),
@@ -111,14 +121,83 @@ window.onload = function () {
         document.getElementById('update-balance-modal').style.display = 'flex';
     });
 
+
+    // balance requests
     $('#remove-balance-btn').click(() => {
-        $.get("/remove-balance", {
-            userName: document.getElementById('username').innerText,
-            balanceName: store.chosenBalance.balanceName
+        $.ajax( {
+            url: `/balance/${store.chosenBalance.balanceId}`,
+            method: 'DELETE',
         }).done(() => {
             location.reload();
         });
     });
+    $('#add-balance__submit-btn').click(() => {
+        $.ajax( {
+            url: "/balance",
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify({
+                userName: document.getElementById('username').innerText,
+                balanceName: document.getElementById('balance-name').value,
+                balanceAmount: document.getElementById('start-balance').value,
+            })
+        }).done(() => {
+            location.reload();
+        });
+    });
+
+    $('#update-balance-apply-btn').click(() => {
+        $.ajax( {
+            url: "/balance",
+            method: 'PUT',
+            data: {
+                userName: document.getElementById('username').innerText,
+                balanceId: store.chosenBalance.balanceId,
+                newBalanceName: document.getElementById('new-balance-name').value,
+            }
+        }).done(() => {
+            location.reload();
+        });
+    });
+
+    // transaction requests
+    $('#add-new-transaction-btn').click(() => {
+        $.ajax( {
+            url: "/transactions",
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify({
+                userName: document.getElementById('username').innerText,
+                balanceId: store.chosenBalance.balanceId,
+                amount: document.getElementById('transaction-summ').value,
+                date: document.getElementById('transaction-date').value,
+                transactionType: document.getElementById('transaction-type').value,
+                commentary: document.getElementById('transaction-commentary').value,
+            })
+        }).done(() => {
+            location.reload();
+        });
+    });
+    $('#update-transaction-apply-btn').click(() => {
+        $.ajax( {
+            url: "/transactions",
+            method: 'PUT',
+            data: {
+                transactionId: document.getElementById('transactionId').value,
+                transactionType: document.getElementById('change-transaction-transaction-type').value,
+                amount: document.getElementById('change-transaction-transaction-summ').value,
+                date: document.getElementById('change-transaction-transaction-date').value,
+                commentary: document.getElementById('change-transaction-transaction-commentary').value,
+            }
+        }).done(() => {
+            location.reload();
+        });
+    });
+
 
     function setBalanceAndTransactionInfo(chosenBalance) {
         document.getElementById('current-balance__value').innerText = `${chosenBalance.amount}р`
@@ -133,7 +212,7 @@ window.onload = function () {
                         <div class="transactions__amount">${transaction.amount}</div>
                         <div class="transactions__comment">${transaction.commentary}</div>
                         <a class="transactions__change" onclick='openChangeTransactionModal(${JSON.stringify(transaction)})'>Изменить</a>
-                        <a href="/remove-transaction?id=${transaction.id}" class="transactions__remove">Удалить</a>
+                        <a onclick='removeTransactionRequest(${transaction.id})' data-transaction-id="${transaction.id}" class="transactions__remove">Удалить</a>
                     </div>
                 `;
             if (transaction.transactionType === 'income') {

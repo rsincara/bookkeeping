@@ -2,19 +2,21 @@ package com.boots.controller;
 
 import com.boots.entity.Balance;
 import com.boots.entity.User;
+import com.boots.exceptions.BalanceAlreadyExists;
+import com.boots.exceptions.BalanceNotFoundException;
+import com.boots.model.NewBalanceForm;
 import com.boots.service.BalanceService;
 import com.boots.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
-@Controller
+@RestController
+@RequestMapping("balance")
 public class BalanceController {
 
     private static final Logger log = Logger.getLogger(BalanceController.class.getName());
@@ -24,40 +26,52 @@ public class BalanceController {
     @Autowired
     private BalanceService balanceService;
 
-    @PostMapping("/add-balance")
-    public String addBalance(@RequestParam String userName, @RequestParam String balanceName, @RequestParam Double balanceAmount) {
-        log.info(String.format("params: userName:%s, balanceName:%s, balanceAmount:%s", userName, balanceName, balanceAmount));
-        User user = userService.loadUserByUsername(userName);
-        Balance newBalance = new Balance();
-        newBalance.setUserId(user.getId());
-        newBalance.setName(balanceName);
-        newBalance.setAmount(balanceAmount);
-        balanceService.saveBalance(newBalance);
-        return "redirect:/";
+    @ResponseStatus(value = HttpStatus.OK)
+    @GetMapping("{id}")
+    public Balance getBalance(
+            @PathVariable Long id) throws BalanceNotFoundException {
+        return balanceService.getBalanceById(id);
+    }
+
+    @ResponseStatus(value = HttpStatus.OK)
+    @GetMapping()
+    public ArrayList<Balance> getAllBalances() {
+        return balanceService.getAllBalances();
     }
 
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @GetMapping("/remove-balance")
-    public void removeBalance(@RequestParam String userName, @RequestParam String balanceName) {
-        log.info(String.format("params: userName:%s, balanceName:%s", userName, balanceName));
-        User user = userService.loadUserByUsername(userName);
-        Balance removingBalance = balanceService.getBalanceByUserIdAndBalanceName(user.getId(), balanceName);
-
-        if (removingBalance != null) {
-            balanceService.removeBalance(removingBalance);
-        }
+    @PostMapping()
+    public void addBalance(
+            @RequestBody NewBalanceForm balanceForm) throws BalanceAlreadyExists {
+        log.info(String.format("params: userName:%s, balanceName:%s, balanceAmount:%s", balanceForm.getUserName(),
+                balanceForm.getBalanceName(), balanceForm.getBalanceAmount()));
+        User user = userService.loadUserByUsername(balanceForm.getUserName());
+        Balance newBalance = new Balance();
+        newBalance.setUserId(user.getId());
+        newBalance.setName(balanceForm.getBalanceName());
+        newBalance.setAmount(balanceForm.getBalanceAmount());
+        balanceService.saveBalance(newBalance);
     }
 
-    @PostMapping("/update-balance")
-    public String updateBalance(
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @DeleteMapping("{id}")
+    public void removeBalance(
+            @PathVariable Long id) throws BalanceNotFoundException {
+        log.info(String.format("params: balanceId:%s", id));
+        Balance removingBalance = balanceService.getBalanceById(id);
+
+            balanceService.removeBalance(removingBalance);
+    }
+
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @PutMapping()
+    public void updateBalance(
             @RequestParam String userName,
-            @RequestParam String oldBalanceName,
-            @RequestParam String newBalanceName) {
-        log.info(String.format("params: userName:%s, oldBalanceName:%s,newBalanceName:%s", userName, oldBalanceName, newBalanceName));
-        User user = userService.loadUserByUsername(userName);
-        Balance balance = balanceService.getBalanceByUserIdAndBalanceName(user.getId(), oldBalanceName);
+            @RequestParam Long balanceId,
+            @RequestParam String newBalanceName) throws UsernameNotFoundException, BalanceNotFoundException {
+        log.info(String.format("params: userName:%s, balanceId:%s,newBalanceName:%s", userName, balanceId, newBalanceName));
+        Balance balance = balanceService.getBalanceById(balanceId);
         balance.setName(newBalanceName);
         balanceService.updateBalance(balance);
-        return "redirect:/";
     }
 }
